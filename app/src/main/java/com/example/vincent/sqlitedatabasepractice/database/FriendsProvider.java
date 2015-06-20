@@ -11,7 +11,7 @@ import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
 
-/**
+/** THIS CONTENT PROVIDER CLASS ALLOWS USERS TO UPDATE, INSERT, QUERY, DELETE FROM THE DATABASE
  * Created by Vincent on 6/19/2015.
  */
 public class FriendsProvider extends ContentProvider {
@@ -51,9 +51,12 @@ public class FriendsProvider extends ContentProvider {
     public String getType(Uri uri) {
         final int match = sUriMatcher.match(uri);
         switch(match){
+            // the cases returns MIMETYPES representing single or multi-row access
             case FRIENDS:
+                // multi-row access
                 return FriendsContract.Friends.CONTENT_TYPE;
             case FRIENDS_ID:
+                // single-row access
                 return FriendsContract.Friends.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown Uri: " + uri);
@@ -83,6 +86,7 @@ public class FriendsProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown Uri: " + uri);
         }
+        // represents the final query statement
         Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs,
                 null, null, sortOrder);
         return cursor;
@@ -92,12 +96,13 @@ public class FriendsProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         Log.v(TAG, "insert(uri =" + uri + ", values= " + values.toString());
 
-        final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
 
         switch(match){
             // one case only because you can't insert into a record, insert into the friends db list
             case FRIENDS:
+                // insert the record and return the row id, then return the record URI
                 long recordId = db.insertOrThrow(FriendsDatabase.Tables.FRIENDS, null, values);
                 return FriendsContract.Friends.buildFriendUri(String.valueOf(recordId));
             default:
@@ -115,16 +120,18 @@ public class FriendsProvider extends ContentProvider {
             return 0;
         }
 
-        final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
 
         switch(match){
             // if user calls delete with uri to a record, find record and delete
             case FRIENDS_ID:
-                // if uri is for a record, get record id and update the record in db with that id
+                // get id of the record
                 String id = FriendsContract.Friends.getFriendId(uri);
+                // set the selection criteria for the query
                 String selectionCriteria = BaseColumns._ID + "=" + id +
                         (!TextUtils.isEmpty(selection) ? " AND (" + selection+ ")" : "");
+                // delete the record based on the query filters
                 return db.delete(FriendsDatabase.Tables.FRIENDS, selectionCriteria, selectionArgs);
             default:
                 throw new IllegalArgumentException("Unknown Uri: " + uri);
@@ -135,7 +142,7 @@ public class FriendsProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         Log.v(TAG, "insert(uri =" + uri + ", values= " + values.toString());
 
-        final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
 
         String selectionCriteria = selection;
@@ -153,6 +160,7 @@ public class FriendsProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown Uri: " + uri);
         }
+        // update the database
         return db.update(FriendsDatabase.Tables.FRIENDS, values, selectionCriteria,selectionArgs);
     }
 }

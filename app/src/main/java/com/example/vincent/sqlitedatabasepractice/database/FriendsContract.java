@@ -10,6 +10,7 @@ public class FriendsContract {
 
     interface FriendsColumns{
         // fields of the record
+        String FRIENDS_ID = "_id";
         String FRIENDS_NAME = "friends_name";
         String FRIENDS_EMAIL = "friends_email";
         String FRIENDS_PHONE = "friends_phone";
@@ -19,6 +20,9 @@ public class FriendsContract {
     public static final String CONTENT_AUTHORITY = "org.example.android.friends.provider";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
     public static final String PATH_FRIENDS = "friends";
+
+    // URI of the table
+    public static final Uri URI_TABLE = Uri.parse(BASE_CONTENT_URI.toString() + "/" + PATH_FRIENDS);
 
     public static final String[] TOP_LEVEL_PATHS = {PATH_FRIENDS};
 
@@ -40,6 +44,8 @@ public class FriendsContract {
         public static Uri buildFriendUri(String friendId){
             return CONTENT_URI.buildUpon().appendEncodedPath(friendId).build();
         }
+
+        // returns the record id from the uri
         public static String getFriendId(Uri uri){
             return uri.getPathSegments().get(1);
         }
