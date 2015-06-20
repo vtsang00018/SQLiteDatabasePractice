@@ -27,8 +27,8 @@ public class FriendsDatabase extends SQLiteOpenHelper {
     }
 
     // database constructor
-    public FriendsDatabase(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, DB_NAME, factory, DB_VERSION);
+    public FriendsDatabase(Context context) {
+        super(context, DB_NAME, null, DB_VERSION);
         mContext = context;
     }
 
@@ -44,15 +44,8 @@ public class FriendsDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        int version = oldVersion;
-        if(version == 1){
-            // Add extra fieds to the database without deleting existing data
-            version = 2;
-        }
-        if(version != DB_VERSION){
-            db.execSQL(DROP_TABLE);
-            onCreate(db);
-        }
+        db.execSQL(DROP_TABLE);
+        onCreate(db);
     }
 
     public static void deleteDatabase(Context context){
