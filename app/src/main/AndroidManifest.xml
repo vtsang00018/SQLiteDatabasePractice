@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.vincent.sqlitedatabasepractice" >
 
-    <uses-permission android:name="ANDROID.PERMISSION.READ_CONTACTS"/>
+    <permission android:name="org.example.android.friends.provider.READWRITE"/>
+    <uses-permission android:name="org.example.android.friends.provider.READWRITE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,6 +19,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider android:name="com.example.vincent.sqlitedatabasepractice.database.FriendsProvider"
+                  android:authorities="org.example.android.friends.provider"
+                  android:exported="true"
+                  android:readPermission="org.example.android.friends.provider.READWRITE"
+                  android:writePermission="org.example.android.friends.provider.READWRITE"/>
     </application>
 
 
